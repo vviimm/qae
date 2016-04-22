@@ -6,7 +6,15 @@ class QAE2014Forms
           <p>Please try to avoid using technical jargon in this section. </p>
                 )
 
-        textarea :innovation_desc_short, "Briefly describe your innovative product/service/initiative" do
+        options :type_of_good, "Select type:" do
+          ref "B 0"
+          required
+          option "product", "Product"
+          option "service", "Service"
+          option "initiative", "Initiative"
+        end
+
+        textarea :innovation_desc_short, "Briefly describe your innovative <span class='qae-form-good-type'>product/service/initiative</span>" do
           ref "B 1"
           required
           context %(
@@ -15,17 +23,19 @@ class QAE2014Forms
           rows 2
           classes "word-max-strict"
           words_max 15
+          type_of_good true
         end
 
-        textarea :innovation_desc_long, "Summarise your innovative product/service/initiative" do
+        textarea :innovation_desc_long, "Summarise your innovative <span class='qae-form-good-type'>product/service/initiative</span>" do
           classes "sub-question"
           sub_ref "B 1.1"
           required
           context %{
-            <p>Describe the product/service/initiative itself. Explain any aspect(s) you think are innovative, and why you think they are innovative. Consider its uniqueness and the challenges you had to overcome. Also explain how it fits within the overall business i.e. is it your sole product?</p>
+            <p>Describe the <span class='qae-form-good-type'>product/service/initiative</span> itself. Explain any aspect(s) you think are innovative, and why you think they are innovative. Consider its uniqueness and the challenges you had to overcome. Also explain how it fits within the overall business i.e. is it your sole product?</p>
           }
           rows 5
           words_max 800
+          type_of_good true
         end
 
         textarea :innovation_context, "Describe the market conditions that led to the creation of your innovation." do

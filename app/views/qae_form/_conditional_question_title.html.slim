@@ -1,0 +1,5 @@
+- if type_of_good.present?
+  h2
+    = question.title.gsub("<span class='qae-form-good-type'>product/service/initiative</span>", "<span class='qae-form-good-type'>#{type_of_good}</span>").html_safe
+- else
+  = question.title.html_safe

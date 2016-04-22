@@ -340,6 +340,10 @@ class QAEFormBuilder
     def header_context header_context
       @q.header_context = header_context
     end
+
+    def type_of_good type_of_good
+      @q.type_of_good = type_of_good
+    end
   end
 
   QuestionCondition = Struct.new(:parent_question_key, :question_key, :question_value)
@@ -366,7 +370,8 @@ class QAEFormBuilder
                   :classes,
                   :drop_condition,
                   :drop_condition_parent,
-                  :drop_block_condition
+                  :drop_block_condition,
+                  :type_of_good
 
     def initialize step, key, title, opts={}
       @step = step

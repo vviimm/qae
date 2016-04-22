@@ -775,6 +775,7 @@ jQuery ->
   ongoingDateDuration()
   SupportLetters.init()
   AuditCertificatesUpload.init()
+  TypeOfGood.init()
 
   if $(".js-press-comment-correct input:checked").val() == "true"
     $(".js-press-comment-feeback").addClass("section-confirmed")

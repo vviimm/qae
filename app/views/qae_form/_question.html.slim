@@ -4,6 +4,8 @@
   - if question.header_context
     == question.header_context
 
+- type_of_good = @form_answer.document["type_of_good"] if question.type_of_good.present?
+
 fieldset class=question.fieldset_classes data=question.fieldset_data_hash class=("question-has-errors" if @form_answer.validator_errors && @form_answer.validator_errors[question.hash_key])
   = condition_divs question do
     - if question.title != ""
@@ -17,7 +19,7 @@ fieldset class=question.fieldset_classes data=question.fieldset_data_hash class=
               span.todo
                 = ref.to_s
 
-          == question.title
+          = render "qae_form/conditional_question_title", question: question, type_of_good: type_of_good
 
           /- unless question.required
             '  (optional)
@@ -56,7 +58,7 @@ fieldset class=question.fieldset_classes data=question.fieldset_data_hash class=
       - if question.title != ""
         label
           span.visuallyhidden
-            = question.title
+            = render "qae_form/conditional_question_title", question: question, type_of_good: type_of_good
             /- unless question.required
               '  (optional)
       = render partial: "qae_form/#{question.delegate_obj.class.name.split('::').last.gsub!(/(.)([A-Z])/,'\1_\2').downcase}", object: question, as: 'question', locals: {answers: answers, attachments: attachments}
