@@ -126,8 +126,14 @@ class QaePdfForms::General::QuestionPointer
     render_question_title_with_ref_or_not
     render_context_and_answer_blocks
 
-    if question.can_have_conditional_hints? && q_visible?
-      render_info_about_branching_questions
+    if q_visible?
+      if question.can_have_conditional_hints?
+        render_info_about_branching_questions
+      end
+
+      if question.have_conditional_parent?
+        render_info_about_conditional_parent
+      end
     end
   end
 
@@ -287,6 +293,23 @@ class QaePdfForms::General::QuestionPointer
                            color: "999999",
                            style: :italic,
                            size: 10
+    end
+  end
+
+  def render_info_about_conditional_parent
+    if answer.blank? &&
+      urn_blank_or_pdf_blank_mode?
+
+      text = question.conditional_hint(child_condition, questions_with_references)
+
+      if text.present?
+        form_pdf.indent 32.mm do
+          form_pdf.render_text text,
+                               color: "999999",
+                               style: :italic,
+                               size: 10
+        end
+      end
     end
   end
 
