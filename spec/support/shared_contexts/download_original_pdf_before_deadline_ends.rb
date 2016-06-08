@@ -16,7 +16,7 @@ shared_context "download original pdf before deadline ends" do
 
   describe "Download" do
     before do
-      deadline.trigger_at = Time.zone.now - 1.day
+      deadline.trigger_at = Time.zone.now - 2.day
       deadline.save!
     end
 
@@ -29,24 +29,12 @@ shared_context "download original pdf before deadline ends" do
         "2222222222".upcase
       }
 
-      let(:original_form_answer) do
-        form_answer.original_form_answer
-      end
-
-      let(:pdf_generator) do
-        original_form_answer.decorate.pdf_generator
-      end
-
-      let(:pdf_content) do
-        PDF::Inspector::Text.analyze(pdf_generator.render).strings
-      end
-
       before do
         # Turn onn Papertrail
         PaperTrail.enabled = true
 
         # Set current time to date before deadline
-        Timecop.freeze(Time.zone.now - 2.days) do
+        Timecop.travel(Time.zone.now - 3.days) do
           form_answer.reload
           form_answer.document["registration_number"] = registration_number_at_the_deadline
           form_answer.save!
@@ -62,6 +50,9 @@ shared_context "download original pdf before deadline ends" do
       end
 
       it "should include main header information" do
+        pdf_generator = form_answer.original_form_answer.decorate.pdf_generator
+        pdf_content = PDF::Inspector::Text.analyze(pdf_generator.render).strings
+
         expect(pdf_content).to include(registration_number_at_the_deadline)
         expect(pdf_content).to_not include(registration_number_after_deadline)
       end
