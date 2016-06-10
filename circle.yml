@@ -3,6 +3,8 @@ dependencies:
     - curl -Ls https://install.convox.com/linux.zip > convox.zip
     - sudo unzip convox.zip -d /usr/local/bin
 test:
+  override:
+    - bundle exec rake rspec-rerun:spec
   post:
     - bundle exec bin/circle
 deployment:

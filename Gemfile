@@ -124,6 +124,7 @@ group :test do
   gem 'pdf-inspector', require: 'pdf/inspector'
   gem 'codeclimate-test-reporter', require: nil
   gem 'rspec_junit_formatter'
+
   gem 'timecop'
   gem 'webmock'
 end
@@ -143,4 +144,6 @@ group :development, :test do
   # Enviroment variables
   gem 'dotenv-rails'
   gem 'rspec-rails', '~> 3.4'
+  # rspec-rerun reruns failed RSpec examples (for brittle tests)
+  gem 'rspec-rerun'
 end
