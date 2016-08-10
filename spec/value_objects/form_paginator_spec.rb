@@ -15,11 +15,15 @@ describe FormPaginator do
   describe "#next_entry" do
     it "returns next entry" do
       paginator = described_class.new(form_answer_2, user)
+      p paginator.ids
+      p paginator.position
       expect(paginator.next_entry.id).to eq(form_answer_3.id)
     end
 
     it "returns nil if current form answer is last" do
       paginator = described_class.new(form_answer_3, user)
+      p paginator.ids
+      p paginator.position
       expect(paginator.next_entry).to be_nil
     end
   end
@@ -39,6 +43,8 @@ describe FormPaginator do
   describe "#last?" do
     it "returns true if current form answer is last" do
       paginator = described_class.new(form_answer_3, user)
+      p paginator.ids
+      p paginator.position
       expect(paginator.last?).to be_truthy
     end
 
@@ -51,11 +57,15 @@ describe FormPaginator do
   describe "#first?" do
     it "returns true if current form answer is first" do
       paginator = described_class.new(form_answer_1, user)
+      p paginator.ids
+      p paginator.position
       expect(paginator.first?).to be_truthy
     end
 
     it "returns false if current form answer is not first" do
       paginator = described_class.new(form_answer_2, user)
+      p paginator.ids
+      p paginator.position
       expect(paginator.first?).to be_falsey
     end
   end

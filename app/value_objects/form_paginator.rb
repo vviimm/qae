@@ -49,8 +49,6 @@ class FormPaginator
     position == ids.count - 1
   end
 
-  private
-
   def ids
     @ids ||= scope.select("form_answers.id").map(&:id)
   end
