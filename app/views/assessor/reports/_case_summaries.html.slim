@@ -1,0 +1,12 @@
+.well
+  h2
+    ' Case Summary Reports
+  ul.list-unstyled.list-actions
+    - FormAnswer::AWARD_TYPE_FULL_NAMES.each do |key, value|
+      - if current_subject.lead_roles.include?(key)
+        li
+          = link_to assessor_report_path("case_summaries", category: key, format: :pdf, year: @award_year.year), class: "action-title", target: admin_conditional_aggregated_pdf_link_target(@award_year, 'case_summary')
+            span.glyphicon.glyphicon-download-alt
+            = value
+            | case summary report
+  .clear
