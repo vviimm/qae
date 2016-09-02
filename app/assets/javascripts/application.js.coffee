@@ -425,12 +425,12 @@ jQuery ->
     console.log("beforeunload-----------------1")
     if !$(".page-read-only-form").length
       console.log("beforeunload-----------------1.1 " + changesUnsaved)
-      if changesUnsaved then loseChangesMessage else undefined
+      if (changesUnsaved && !ApplicationCollaboratorsAccessManager.do_not_need_to_save()) then loseChangesMessage else undefined
 
   if window.addEventListener isnt undefined
     window.addEventListener "beforeunload", (e) ->
       console.log("beforeunload-----------------2")
-      return undefined unless changesUnsaved
+      return undefined if (!changesUnsaved || ApplicationCollaboratorsAccessManager.do_not_need_to_save())
 
       console.log("beforeunload-----------------2.1" + changesUnsaved)
 

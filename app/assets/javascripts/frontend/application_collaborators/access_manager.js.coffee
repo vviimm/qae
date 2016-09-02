@@ -131,3 +131,7 @@ window.ApplicationCollaboratorsAccessManager =
     #
     ApplicationCollaboratorsAccessManager.does_im_current_editor() &&
     window.pusher_last_editor_id != editor.id
+
+  do_not_need_to_save: () ->
+    ApplicationCollaboratorsGeneralRoomTracking.there_are_other_collaborators_here() &&
+    ApplicationCollaboratorsAccessManager.im_in_viewer_mode()
