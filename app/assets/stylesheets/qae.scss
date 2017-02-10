@@ -37,6 +37,11 @@ $gutter-one-sixth: $gutter/6;
 @import "frontend/layout";
 @import "frontend/forms";
 @import "frontend/attachment";
+@import "frontend/jquery.rateyo.min";
+@import "frontend/jquery.range";
+
+@import "frontend/custom_questions/autocomplete";
+@import "frontend/custom_questions/slider";
 
 //
 @import "qae-slimmer-patch";

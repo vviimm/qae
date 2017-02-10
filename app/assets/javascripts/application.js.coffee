@@ -1,5 +1,6 @@
 #= require jquery
 #= require jquery_ujs
+#= require jquery-ui
 #= require jquery.iframe-transport
 #= require jquery.fileupload
 #= require select2.full.min
@@ -10,6 +11,8 @@
 #= require govuk/selection-buttons
 #= require libs/suchi/isOld.js
 #= require libs/pusher.min.js
+#= require libs/jquery.rateyo.min.js
+#= require libs/jquery.range-min.js
 #= require govuk_toolkit
 #= require mobile
 #= require browser-check
@@ -915,3 +918,12 @@ jQuery ->
     $(".js-press-comment-feeback").removeClass("section-confirmed")
     if $(".js-press-comment-correct input:checked").val() == "true"
       $(".js-press-comment-feeback").addClass("section-confirmed")
+
+  # Autocomplete questions
+  AutocompleteQuestion.init();
+
+  # Range selector questions
+  SliderQuestion.init();
+
+  # Stars rating questions
+  StarsQuestion.init();

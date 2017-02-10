@@ -40,6 +40,9 @@ require "qae_form_builder/by_trade_goods_and_services_label_question"
 require "qae_form_builder/trade_commercial_success_question"
 
 require "qae_form_builder/turnover_exports_calculation_question"
+require "qae_form_builder/stars_question"
+require "qae_form_builder/slider_question"
+require "qae_form_builder/autocomplete_question"
 
 class QAEFormBuilder
   class << self

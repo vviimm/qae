@@ -29,17 +29,19 @@ class FormAnswer < ActiveRecord::Base
     "innovation", # Innovation Award
     "development", # Sustainable Development Award
     "mobility", # Promoting Opportunity Award
-    "promotion" # Enterprise Promotion Award
+    "promotion", # Enterprise Promotion Award
+    "web" # Web Development Award
   ]
 
-  BUSINESS_AWARD_TYPES = %w(trade innovation development mobility)
+  BUSINESS_AWARD_TYPES = %w(trade innovation development mobility web)
 
   AWARD_TYPE_FULL_NAMES = {
     "trade" => "International Trade",
     "innovation" => "Innovation",
     "development" => "Sustainable Development",
     "mobility" => "Promoting Opportunity",
-    "promotion" => "Enterprise Promotion"
+    "promotion" => "Enterprise Promotion",
+    "web" => "Web Development"
   }
   CURRENT_AWARD_TYPE_FULL_NAMES = AWARD_TYPE_FULL_NAMES.reject do |k, _|
     k == "promotion"
@@ -61,6 +63,7 @@ class FormAnswer < ActiveRecord::Base
     has_one :development_eligibility, class_name: 'Eligibility::Development', dependent: :destroy
     has_one :mobility_eligibility, class_name: 'Eligibility::Mobility', dependent: :destroy
     has_one :promotion_eligibility, class_name: 'Eligibility::Promotion', dependent: :destroy
+    has_one :web_eligibility, class_name: 'Eligibility::Web', dependent: :destroy
     has_one :audit_certificate, dependent: :destroy
     has_one :feedback, dependent: :destroy
     has_one :press_summary, dependent: :destroy

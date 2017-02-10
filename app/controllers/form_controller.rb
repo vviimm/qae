@@ -16,7 +16,8 @@ class FormController < ApplicationController
     :new_innovation_form,
     :new_international_trade_form,
     :new_sustainable_development_form,
-    :new_social_mobility_form
+    :new_social_mobility_form,
+    :new_web_development_form
   ]
 
   before_action :get_collaborators, only: [
@@ -64,6 +65,10 @@ class FormController < ApplicationController
 
   def new_social_mobility_form
     build_new_form("mobility")
+  end
+
+  def new_web_development_form
+    build_new_form("web")
   end
 
   def edit_form

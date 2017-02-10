@@ -1,0 +1,10 @@
+.select2 ul.select2-selection__rendered > li.select2-selection__choice {
+  font-size: 15px;
+  margin-top: 5px;
+}
+
+.select2-container--below {
+  ul.select2-selection__rendered > li.select2-selection__choice {
+    margin-top: 15px;
+  }
+}
