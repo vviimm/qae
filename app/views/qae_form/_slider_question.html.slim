@@ -1,0 +1,7 @@
+- values = question.entities
+
+.js-slider-question
+  input class="js-slider-amount js-trigger-autosave" name=question.input_name data-value=(values if defined?(values)) autocomplete="off" id="q_#{question.key}" type="text" data-min="#{question.min}" data-max="#{question.max}" *possible_read_only_ops
+
+  .js-slider-question-range
+

@@ -42,6 +42,7 @@ ul.applications-list
     .pull-right
       - unless current_account.has_award_in_this_year?(:development)
         = link_to "New application", apply_sustainable_development_award_path
+
   - if display_social_mobility?
     li
       h3
@@ -51,3 +52,11 @@ ul.applications-list
       .pull-right
         - unless current_account.has_award_in_this_year?(:mobility)
           = link_to "New application", apply_social_mobility_award_path
+
+  li
+    h3
+      ' Web Development Award
+    small
+      ' You can only apply for one Web Development Award
+    .pull-right
+      = link_to "New application", apply_web_development_award_path

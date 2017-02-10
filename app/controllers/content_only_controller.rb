@@ -20,7 +20,8 @@ class ContentOnlyController < ApplicationController
                   :award_info_innovation,
                   :award_info_trade,
                   :award_info_development,
-                  :award_info_mobility
+                  :award_info_mobility,
+                  :award_info_web
                 ]
 
   before_action :get_collaborators,
@@ -28,7 +29,8 @@ class ContentOnlyController < ApplicationController
                   :award_info_innovation,
                   :award_info_trade,
                   :award_info_development,
-                  :award_info_mobility
+                  :award_info_mobility,
+                  :award_info_web
                 ]
 
   before_action :restrict_access_if_admin_in_read_only_mode!,
@@ -39,6 +41,7 @@ class ContentOnlyController < ApplicationController
   before_action :check_trade_count_limit, only: :apply_international_trade_award
   before_action :check_development_count_limit, only: :apply_sustainable_development_award
   before_action :check_mobility_count_limit, only: :apply_social_mobility_award
+  before_action :check_web_count_limit, only: :apply_web_development_award
 
   expose(:form_answer) do
     current_user.form_answers.find(params[:id])
@@ -66,6 +69,7 @@ class ContentOnlyController < ApplicationController
     @user_award_forms_development = forms["development"]
     @user_award_forms_mobility = forms["mobility"]
     @user_award_forms_promotion = forms["promotion"]
+    @user_award_forms_web = forms["web"]
 
     @user_award_forms_submitted = @user_award_forms.submitted
 

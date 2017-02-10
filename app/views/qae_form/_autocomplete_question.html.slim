@@ -1,0 +1,7 @@
+- values = question.entities
+
+select class="js-autocomplete-multiple-boxes js-trigger-autosave" multiple="multiple" name="#{question.input_name}[]" data-selected-value=("#{values.join(", ")}" if defined?(values)) id="#{question.input_name}" *possible_read_only_ops
+
+  - question.tags.each do |tag|
+    option value="#{tag}"
+      = tag
