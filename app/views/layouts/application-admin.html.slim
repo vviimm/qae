@@ -90,6 +90,7 @@ html.no-js
                                   destroy_admin_session_path,
                                   method: :delete
 
+            = render "shared/admins_banner_indicating" unless Rails.env.production?
 
         #main-container
           .container

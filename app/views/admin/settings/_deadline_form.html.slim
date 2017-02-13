@@ -14,7 +14,7 @@
                   input_html: { id: '' }
       .control-action
         = link_to "Cancel", "#", class: "btn btn-default btn-cancel if-no-js-hide"
-        = f.submit "Save", class: "btn btn-primary btn-submit"
+        = f.submit "Save", class: "btn btn-primary btn-submit", data: { confirm: 'Are you sure you want to change the date? This could change the current status of the applications and may send out emails to users' }
       .clear
 
   = link_to "Edit", "#", class: "edit-deadline if-no-js-hide"
