@@ -77,22 +77,23 @@ class FormAnswerDecorator < ApplicationDecorator
 
   def data_attributes=(attributes)
     object.document.merge! attributes.except(*array_keys)
-    # arrays needs special treatment
-    # it only works for array of hashes.
-    # If you had to update something else, you would need to refactor
+
     array_keys.each do |key|
       if attributes.has_key? key
-        new_array = attributes[key]
-        old_array = object.document[key]
+        result = {}
 
-        new_array.each do |index, value|
-          if index.to_i < old_array.length
-            old_array[index.to_i].merge! value
-          else
-            old_array << value
+        attributes.each do |(k, v)|
+          if v.is_a?(Hash)
+            v.values.each do |value|
+              result[k] ||= []
+
+              if value.is_a?(Hash)
+                result[k] << value
+              end
+            end
           end
         end
-        old_array.reject!{|i| i.include? "_destroy" }
+        object.document.merge! result
       end
     end
   end
@@ -104,8 +105,6 @@ class FormAnswerDecorator < ApplicationDecorator
   def company_name
     company_or_nominee_name
   end
-
-  def
 
   def nominee_title
     object.nominee_title ? object.nominee_title : document["nominee_title"]
@@ -378,6 +377,19 @@ class FormAnswerDecorator < ApplicationDecorator
 
   def mobility_desc_short
     document["mobility_desc_short"]
+  end
+
+  def organisation_type
+    document["organisation_type"]
+  end
+
+  def this_entry_relates_to
+    unless document["application_relate_to"] == nil
+      document["application_relate_to"].map(&:values).flatten()
+    end
+    unless document["application_relate_to_header"] == nil
+      document["application_relate_to_header"].map(&:values).flatten()
+    end
   end
 
   def application_background
