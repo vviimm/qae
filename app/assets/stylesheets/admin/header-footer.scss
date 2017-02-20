@@ -84,7 +84,7 @@
     border: none;
     border-radius: 0;
     background: $black-header;
-    
+
     .lte-ie7 & {
       height: 81px !important;
       z-index: 100001 !important;
@@ -250,7 +250,7 @@
       background-color: $header-hover !important;
     }
   }
-  
+
   // moving down here seems to make it work
   .navbar-brand {
     width: 58px;
@@ -284,4 +284,12 @@
       background-size: 28px 37px !important;
     }
   }
+}
+
+.admins-banner {
+  background: #f6603d none repeat scroll 0 0;
+  color: white;
+  line-height: 35px;
+  position: relative;
+  text-align: center;
 }

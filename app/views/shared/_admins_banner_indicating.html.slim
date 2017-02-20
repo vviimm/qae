@@ -1,0 +1,5 @@
+.admins-banner.clearfix
+  - if Rails.env.development? || ENV['ASSET_HOST'] == "dev.queens-awards-enterprise.service.gov.uk"
+    |DEVELOPMENT ENVIRONMENT
+  - elsif Rails.env.staging? || ENV['ASSET_HOST'] == "staging.queens-awards-enterprise.service.gov.uk"
+    |STAGING ENVIRONMENT
