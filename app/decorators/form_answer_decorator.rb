@@ -399,12 +399,13 @@ class FormAnswerDecorator < ApplicationDecorator
   end
 
   def this_entry_relates_to
-    unless document["application_relate_to"] == nil
-      document["application_relate_to"].map(&:values).flatten()
+    source_value = if document["application_relate_to"].present?
+      document["application_relate_to"]
+    elsif document["application_relate_to_header"].present?
+      document["application_relate_to_header"]
     end
-    unless document["application_relate_to_header"] == nil
-      document["application_relate_to_header"].map(&:values).flatten()
-    end
+
+    source_value.map(&:values).flatten if source_value.present?
   end
 
   def application_background

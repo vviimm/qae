@@ -1,5 +1,4 @@
-- account_name = "Organisation type"
-- organisation_types = ["company", "charity"]
+- title = "Organisation type"
 
 - unless @form_answer.promotion?
   - if user_can_edit(@form_answer, :organisation_type)
@@ -10,7 +9,7 @@
         = hidden_field_tag :section, "organisation_type"
 
         .form-container
-          label.form-label = account_name
+          label.form-label = title
 
           .form-value
             p
@@ -21,7 +20,7 @@
           .form-fields.form-block
             = f.simple_fields_for(:data) do |f|
               = f.input :organisation_type,
-                        collection: organisation_types,
+                        collection: AppraisalFormHelper::COMPANY_ORGANISATION_TYPES,
                         label: false,
                         input_html: { class: "form-control" }
             .form-actions.text-right
@@ -36,6 +35,6 @@
   - else
     .form-group
       .form-container
-        label.form-label = account_name
+        label.form-label = title
         p
           = @form_answer.organisation_type.capitalize
