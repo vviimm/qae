@@ -1,8 +1,6 @@
 ready = ->
   $('body').on 'submit', '.new_comment', (e) ->
     that = $(this)
-    commentsContainer = that.closest(".comments-container")
-    counterSpan = that.parents(".panel-body").find(".js-comments-counter")
 
     e.preventDefault()
     $.ajax
@@ -16,25 +14,26 @@ ready = ->
         that.find("input[type='checkbox']").prop("checked", false)
         that.find(".comment-actions").removeClass("comment-flagged")
 
-        amountComments = "(" + commentsContainer.find(".comment").length.toString() + ")"
-        counterSpan.text(amountComments)
+        updateCommentsCounter(that.closest(".comments-container"))
 
   $('body').on 'submit', '.destroy-comment', (e) ->
     e.preventDefault()
-
     commentsContainer = $(this).closest(".comments-container")
-    counterSpan = $(this).parents(".panel-body").find(".js-comments-counter")
 
     $.ajax
       url: $(this).attr('action'),
       type: 'DELETE'
     $(this).parents('.comment').remove()
 
-    amountComments = "(" + commentsContainer.find(".comment").length.toString() + ")"
-    counterSpan.text(amountComments)
+    updateCommentsCounter(commentsContainer)
 
   toggleFlagged()
   deleteCommentAlert()
+
+updateCommentsCounter = (commentsContainer) ->
+  counterSpan = commentsContainer.parents(".panel-body").find(".js-comments-counter")
+  amountComments = "(" + commentsContainer.find(".comment").length.toString() + ")"
+  counterSpan.text(amountComments)
 
 toggleFlagged = ->
   $(document).on "click", ".js-link-flag-comment", (e) ->
