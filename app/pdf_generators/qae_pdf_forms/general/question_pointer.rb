@@ -235,7 +235,7 @@ class QaePdfForms::General::QuestionPointer
   end
 
   def render_question_context
-    if question.context.present? && urn_blank_or_pdf_blank_mode?
+    if question.context.present?
       render_context_or_help_block(question.escaped_context)
     end
   end
@@ -271,7 +271,8 @@ class QaePdfForms::General::QuestionPointer
       form_pdf.render_text context,
                            style: :bold
     else
-      form_pdf.render_text context
+      form_pdf.render_text context,
+                           style: :italic
     end
   end
 
