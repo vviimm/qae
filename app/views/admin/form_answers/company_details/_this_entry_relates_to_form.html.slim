@@ -37,5 +37,6 @@
       .form-container
         label.form-label = title
         p
-          ul
-            = render "admin/form_answers/company_details/entry_relates_to_value"
+          - if @form_answer.this_entry_relates_to.present?
+            ul
+              = render "admin/form_answers/company_details/entry_relates_to_value"
