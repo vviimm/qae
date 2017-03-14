@@ -59,12 +59,13 @@
           - if current_admin || current_user || current_assessor
             ul#proposition-links
               - if current_admin || current_user.try(:completed_registration)
-                li
-                  = link_to "Applications", dashboard_path
-                li
-                  = link_to "Account details", correspondent_details_account_path
-                li
-                  = link_to "Collaborators", account_collaborators_path
+                - unless admin_in_read_only_mode?
+                  li
+                    = link_to "Applications", dashboard_path
+                  li
+                    = link_to "Account details", correspondent_details_account_path
+                  li
+                    = link_to "Collaborators", account_collaborators_path
               li
                 - if current_admin
                   = link_to "Sign out", destroy_admin_session_path, method: :delete
