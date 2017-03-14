@@ -2,6 +2,7 @@
 #= require jquery_ujs
 #= require jquery.iframe-transport
 #= require jquery.fileupload
+#= require ckeditor/init
 #= require select2.full.min
 #= require Countable
 #= require moment.min
@@ -16,6 +17,7 @@
 #= require vendor/zxcvbn
 #= require vendor/jquery-debounce
 #= require_tree ./frontend
+#= require_tree ./ckeditor
 #= require offline
 
 jQuery ->
@@ -371,6 +373,7 @@ jQuery ->
         resetResizeTextarea()
 
   $(document).on "click", ".save-quit-link a", (e) ->
+    CKchanged()
     if changesUnsaved
       e.preventDefault()
       e.stopPropagation()
@@ -381,6 +384,18 @@ jQuery ->
 
       autosave ->
         window.location.href = link
+
+  CKupdate = ->
+    for instance of CKEDITOR.instances
+      CKEDITOR.instances[instance].updateElement()
+
+  CKchanged = ->
+    for instance of CKEDITOR.instances
+      old_value = $("\##{instance}").val()
+      new_value = CKEDITOR.instances[instance].getData()
+
+      if old_value != new_value
+        raiseChangesFlag()
 
   save_form_data = (callback) ->
     url = $('form.qae-form').data('autosave-url')
@@ -417,6 +432,7 @@ jQuery ->
       autosave_enabled = false
 
     if autosave_enabled
+      CKupdate()
       save_form_data(callback)
     #TODO: indicators, error handlers?
 
@@ -915,3 +931,6 @@ jQuery ->
     $(".js-press-comment-feeback").removeClass("section-confirmed")
     if $(".js-press-comment-correct input:checked").val() == "true"
       $(".js-press-comment-feeback").addClass("section-confirmed")
+
+  # Initialize ckeditor
+  InitializeCkeditor.init()
