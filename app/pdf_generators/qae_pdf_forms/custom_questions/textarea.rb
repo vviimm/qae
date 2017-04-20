@@ -7,12 +7,12 @@ module QaePdfForms::CustomQuestions::Textarea
   def render_wysywyg_content
     if display_wysywyg_q?
       wysywyg_entries.each do |child|
-        tag_name = wysywyg_get_tag_name(child)
+        t_name = wysywyg_get_tag_name(child)
 
-        if MAIN_CONTENT_BLOCKS.include?(tag_name)
+        if MAIN_CONTENT_BLOCKS.include?(t_name)
           render_wysywyg_line(
             {
-              "<" + tag_name + ">" => {
+              "<" + t_name + ">" => {
                 style: wysywyg_get_style(child),
                 content: wysywyg_get_item_content(child)
               }
@@ -35,6 +35,10 @@ module QaePdfForms::CustomQuestions::Textarea
     ).children[1]
      .children[0]
      .children
+  end
+
+  def wysywyg_get_tag_name(tag)
+    tag.name if SUPPORTED_TAGS.include?(tag.name.to_s)
   end
 
   def render_wysywyg_line(line)
@@ -212,15 +216,6 @@ module QaePdfForms::CustomQuestions::Textarea
     styles
   end
 
-  def wysywyg_get_tag_name(tag)
-    if tag.name.is_a?(String) && SUPPORTED_TAGS.detect do |el|
-        el == tag.name
-      end
-
-      tag.name
-    end
-  end
-
   def wysywyg_get_style(tag)
     get_attribute_value(tag, "style")
   end
@@ -239,35 +234,32 @@ module QaePdfForms::CustomQuestions::Textarea
     end
   end
 
-  def wysywyg_get_item_content(child)
-    content = []
-
+  def wysywyg_get_item_content(child, content=[])
     if child.children.present?
       child.children.each do |baby|
-        tag = wysywyg_get_tag_name(baby)
+        t_name = wysywyg_get_tag_name(baby)
 
-        if tag == SUPPORTED_TAGS[1] || tag == SUPPORTED_TAGS[2]
-          content << {"<" + tag + ">" => {style: wysywyg_get_style(baby)}}
-        elsif tag == SUPPORTED_TAGS[3]
-          content << {"<" + tag + ">" => {style: wysywyg_get_style(baby)}}
-        elsif tag == SUPPORTED_TAGS[4]
-          tag = "link"
-          content << "<u><" + tag + " href=#{links_href(baby)}>"
-        elsif tag == SUPPORTED_TAGS[7]
-          simple_text = baby.text
-          content << simple_text
+        content << case t_name
+        when "ul", "ol", "li"
+          {"<" + t_name + ">" => {style: wysywyg_get_style(baby)}}
+        when "a"
+          "<u><link href=#{links_href(baby)}>"
+        when "text"
+          baby.text
         else
-          content << "<" + tag + ">"
+          "<" + t_name + ">"
         end
 
-        wysywyg_get_item_content(baby)
+        wysywyg_get_item_content(baby, content)
 
-        if tag != SUPPORTED_TAGS[7]
+        if tag != "text"
+          ending_tag = "</" + tag + ">"
+
           if tag == "link"
-            content << "</" + tag + "></u>"
-          else
-            content << "</" + tag + ">"
+            ending_tag = "#{ending_tag}</u>"
           end
+
+          content << ending_tag
         end
       end
     end
