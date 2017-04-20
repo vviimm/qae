@@ -1,31 +1,51 @@
 module QaePdfForms::CustomQuestions::Textarea
 
-  SUPPORTED_TAGS = ["p", "ul", "ol", "li", "a", "em", "strong", "text"]
+  MAIN_CONTENT_BLOCKS = ["p", "ul", "ol"]
+
+  SUPPORTED_TAGS = MAIN_CONTENT_BLOCKS + ["li", "a", "em", "strong", "text"]
 
   def render_wysywyg_content
-    lines = []
+    if display_wysywyg_q?
+      wysywyg_raw_content.each do |child|
+        tag_name = get_tag_name(child)
 
-    if q_visible? && humanized_answer.present?
-      doc = Nokogiri::HTML.parse(humanized_answer)
-      children = doc.children[1].children[0].children
+        if MAIN_CONTENT_BLOCKS.include?(tag_name)
+          adding_children(content, child)
 
-      children.each do |child|
-        lines_tag = tags_name(child)
-
-        if lines_tag == SUPPORTED_TAGS[0] || lines_tag == SUPPORTED_TAGS[1] || lines_tag == SUPPORTED_TAGS[2]
-          textarea_content_picker(lines, child, lines_tag)
+          render_line(
+            {
+              "<" + tag_name + ">" => {
+                style: tags_style(child),
+                content: content
+              }
+            }
+          )
         end
       end
     end
+  end
 
-    lines.each do |line|
-      if line.keys[0] == "<p>"
-        lines_style = styles_picker(get_styles(line).split(", "))
-        print_pdf(get_content(line).join(""), lines_style)
+  private
 
-      elsif line.keys[0] == "<ul>" || line.keys[0] == "<ol>"
-        print_lists(line.keys[0], line)
-      end
+  def display_wysywyg_q?
+    q_visible? && humanized_answer.present?
+  end
+
+  def wysywyg_raw_content
+    Nokogiri::HTML.parse(
+      humanized_answer
+    ).children[1]
+     .children[0]
+     .children
+  end
+
+  def render_line(line)
+    if line.keys[0] == "<p>"
+      lines_style = styles_picker(get_styles(line).split(", "))
+      print_pdf(get_content(line).join(""), lines_style)
+
+    elsif line.keys[0] == "<ul>" || line.keys[0] == "<ol>"
+      print_lists(line.keys[0], line)
     end
   end
 
@@ -194,24 +214,25 @@ module QaePdfForms::CustomQuestions::Textarea
     styles
   end
 
-  def tags_name(tag)
+  def get_tag_name(tag)
     if tag.name.is_a?(String) && SUPPORTED_TAGS.detect do |el|
         el == tag.name
       end
+
       tag.name
     end
   end
 
   def tags_style(tag)
-    if tag.attributes["style"].present?
-      tag.attributes["style"].value
-    end
+    get_attribute_value(tag, "style")
   end
 
   def links_href(tag)
-    if tag.attributes["href"].present?
-      tag.attributes["href"].value
-    end
+    get_attribute_value(tag, "href")
+  end
+
+  def get_attribute_value(tag, attr_name)
+    tag.attributes[attr_name].value if tag.attributes[attr_name].present?
   end
 
   def simple_text(tag)
@@ -223,7 +244,7 @@ module QaePdfForms::CustomQuestions::Textarea
   def adding_children(content, child)
     if child.children.present?
       child.children.each do |baby|
-        tag = tags_name(baby)
+        tag = get_tag_name(baby)
 
         if tag == SUPPORTED_TAGS[1] || tag == SUPPORTED_TAGS[2]
           content << {"<" + tag + ">" => {style: tags_style(baby)}}
@@ -250,11 +271,5 @@ module QaePdfForms::CustomQuestions::Textarea
         end
       end
     end
-  end
-
-  def textarea_content_picker(lines, child, lines_tag)
-    content = []
-    adding_children(content, child)
-    lines << {"<" + lines_tag + ">" => {style: tags_style(child), content: content}}
   end
 end
