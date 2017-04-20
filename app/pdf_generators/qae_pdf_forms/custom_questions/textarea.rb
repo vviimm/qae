@@ -100,21 +100,21 @@ module QaePdfForms::CustomQuestions::Textarea
   end
 
   def wysywyg_list_content_generator(content, styles, key)
+    @n = 0
     @string = []
     @styles = Array.wrap(styles)
     @keys_history = [key]
-    @ns_history = [n]
+    @ns_history = [@n]
     @li_counter = 0
-    @n = 0
 
     content.each do |i|
-      if wysywyg_is_it_tag?('li')
+      if wysywyg_is_it_tag?(i, 'li')
         wysywyg_handle_li_tag(key, i)
 
-      elsif wysywyg_is_it_tag?('ul')
+      elsif wysywyg_is_it_tag?(i, 'ul')
         wysywyg_handle_ul_tag(key, i)
 
-      elsif wysywyg_is_it_tag?('ol')
+      elsif wysywyg_is_it_tag?(i, 'ol')
         wysywyg_handle_ol_tag(key, i)
 
       elsif wysywyg_list_ending_tag?(i)
@@ -131,6 +131,8 @@ module QaePdfForms::CustomQuestions::Textarea
         @string << i
       end
     end
+
+    @string
   end
 
   def wysywyg_handle_list_ending_tag(key, i)
@@ -139,16 +141,9 @@ module QaePdfForms::CustomQuestions::Textarea
     @ns_history.pop
   end
 
-  def wysywyg_is_it_tag?(i)
-    i.is_a?(Hash) && i.keys[0] == "<#{i}>"
+  def wysywyg_is_it_tag?(i, match_rule)
+    i.is_a?(Hash) && i.keys[0] == "<#{match_rule}>"
   end
-
-    @string = []
-    @styles = Array.wrap(styles)
-    @keys_history = [key]
-    @ns_history = [n]
-    @li_counter = 0
-    @n = 0
 
   def wysywyg_handle_li_tag(key, i)
     if key == "<ol>"
