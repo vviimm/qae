@@ -99,6 +99,8 @@ module QaePdfForms::CustomQuestions::Textarea
   end
 
   def strings_picker(content, string, styles, key)
+    styles = Array.wrap(styles)
+
     n = 0
     keys_history = [key]
     ns_history = [n]
@@ -215,6 +217,8 @@ module QaePdfForms::CustomQuestions::Textarea
   end
 
   def styles_picker(arr)
+    arr = Array.wrap(arr)
+
     styles = { inline_format: true,
                        color: FormPdf::DEFAULT_ANSWER_COLOR }
     if arr.present?
