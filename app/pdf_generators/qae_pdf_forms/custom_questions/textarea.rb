@@ -50,22 +50,23 @@ module QaePdfForms::CustomQuestions::Textarea
       lines_style = styles_picker(wysywyg_get_style_values(line).split(", "))
       print_pdf(wysywyg_get_values_content(line).join(""), lines_style)
 
-    elsif wysywyg_list_tag?(tag_abbr)
+    elsif wysywyg_list_leading_tag?(tag_abbr)
       wysywyg_print_lists(tag_abbr, line)
     end
   end
 
-  def wysywyg_list_tag?(tag_abbr)
+  def wysywyg_list_leading_tag?(tag_abbr)
     LIST_TAGS.include?(tag_abbr.gsub(/(\<|\>)/, ""))
   end
 
+  def wysywyg_list_ending_tag?(tag_abbr)
+    tag_abbr == "</ul>" || tag_abbr == "</ol>"
+  end
+
   def wysywyg_print_lists(key, line)
-    strings_picker(
-      wysywyg_prepare_list_content(line),
-      [],
-      wysywyg_get_list_left_margin(line),
-      key
-    )
+    wysywyg_list_content_generator(wysywyg_prepare_list_content(line),
+                                   wysywyg_get_list_left_margin(line),
+                                   key)
   end
 
   def wysywyg_get_list_left_margin(line)
@@ -98,95 +99,116 @@ module QaePdfForms::CustomQuestions::Textarea
     content
   end
 
-  def strings_picker(content, string, styles, key)
-    styles = Array.wrap(styles)
-
-    n = 0
-    keys_history = [key]
-    ns_history = [n]
-    li_counter = 0
+  def wysywyg_list_content_generator(content, styles, key)
+    @string = []
+    @styles = Array.wrap(styles)
+    @keys_history = [key]
+    @ns_history = [n]
+    @li_counter = 0
+    @n = 0
 
     content.each do |i|
-      if i.is_a?(Hash) && i.keys[0] == "<li>"
+      if wysywyg_is_it_tag?('li')
+        wysywyg_handle_li_tag(key, i)
 
-        if key == "<ol>"
-          n += 1
-        end
+      elsif wysywyg_is_it_tag?('ul')
+        wysywyg_handle_ul_tag(key, i)
 
-        if string.present?
-          li_style = styles_picker(styles)
-          print_pdf(string.join(""), li_style)
+      elsif wysywyg_is_it_tag?('ol')
+        wysywyg_handle_ol_tag(key, i)
 
-          if li_counter > 1
-            (li_counter - 1).times do
-              styles.pop
-            end
-            li_counter = 0
-          else
-            li_counter = 0
-          end
-
-          string = []
-          marker_of_list(string, key, n)
-
-          if wysywyg_get_style_values(i).present?
-            styles << wysywyg_get_style_values(i)
-          end
-        else
-          marker_of_list(string, key, n)
-
-          if wysywyg_get_style_values(i).present?
-            styles << wysywyg_get_style_values(i)
-          end
-        end
-
-      elsif i.is_a?(Hash) && i.keys[0] == "<ul>"
-        li_style = styles_picker(styles)
-        print_pdf(string.join(""), li_style)
-
-        key = "<ul>"
-        keys_history << key
-        ns_history << n
-        string = []
-
-        if wysywyg_get_style_values(i).present?
-          styles << wysywyg_get_style_values(i)
-        else
-          styles << "margin-left: 20px"
-        end
-
-      elsif i.is_a?(Hash) && i.keys[0] == "<ol>"
-        li_style = styles_picker(styles)
-        print_pdf(string.join(""), li_style)
-
-        ns_history << n
-        n = 0
-        key = "<ol>"
-        keys_history << key
-        string = []
-
-        if wysywyg_get_style_values(i).present?
-          styles << wysywyg_get_style_values(i)
-        else
-          styles << "margin-left: 20px"
-        end
-
-      elsif i == "</ul>" || i == "</ol>"
-        keys_history.pop
-        key = keys_history.last
-        n = ns_history.last
-        ns_history.pop
+      elsif wysywyg_list_ending_tag?(i)
+        wysywyg_handle_list_ending_tag(key, i)
 
       elsif i == "</li>"
-        li_counter += 1
+        @li_counter += 1
 
       elsif i == content.last
-        li_style = styles_picker(styles)
-        print_pdf(string.join(""), li_style)
+        li_style = styles_picker(@styles)
+        print_pdf(@string.join(""), li_style)
 
       else
-        string << i
+        @string << i
       end
+    end
+  end
+
+  def wysywyg_handle_list_ending_tag(key, i)
+    @keys_history.pop
+    @n = @ns_history.last
+    @ns_history.pop
+  end
+
+  def wysywyg_is_it_tag?(i)
+    i.is_a?(Hash) && i.keys[0] == "<#{i}>"
+  end
+
+    @string = []
+    @styles = Array.wrap(styles)
+    @keys_history = [key]
+    @ns_history = [n]
+    @li_counter = 0
+    @n = 0
+
+  def wysywyg_handle_li_tag(key, i)
+    if key == "<ol>"
+      @n += 1
+    end
+
+    if @string.present?
+      li_style = styles_picker(@styles)
+      print_pdf(@string.join(""), li_style)
+
+      if @li_counter > 1
+        (@li_counter - 1).times do
+          @styles.pop
+        end
+
+        @li_counter = 0
+      else
+        @li_counter = 0
+      end
+
+      @string = []
+    end
+
+    marker_of_list(@string, key, @n)
+
+    if wysywyg_get_style_values(i).present?
+      @styles << wysywyg_get_style_values(i)
+    end
+  end
+
+  def wysywyg_handle_ul_tag(key, i)
+    li_style = styles_picker(@styles)
+    print_pdf(@string.join(""), li_style)
+
+    key = "<ul>"
+    @keys_history << key
+    @ns_history << @n
+    @string = []
+
+    @styles << if wysywyg_get_style_values(i).present?
+      wysywyg_get_style_values(i)
+    else
+      "margin-left: 20px"
+    end
+  end
+
+  def wysywyg_handle_ol_tag(key, i)
+    li_style = styles_picker(@styles)
+    print_pdf(@string.join(""), li_style)
+
+    @ns_history << @n
+    @n = 0
+    @string = []
+    key = "<ol>"
+    @keys_history << key
+
+    @styles << if wysywyg_get_style_values(i).present?
+      wysywyg_get_style_values(i)
+    else
+      "margin-left: 20px"
     end
   end
 
@@ -236,6 +258,7 @@ module QaePdfForms::CustomQuestions::Textarea
         styles[:align] = el.split(":").second.strip.to_sym
       end
     end
+
     styles
   end
 
