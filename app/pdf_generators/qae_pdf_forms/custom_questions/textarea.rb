@@ -1,8 +1,8 @@
 module QaePdfForms::CustomQuestions::Textarea
 
-  AVAILABLE_TAGS = ["p", "ul", "ol", "li", "a", "em", "strong", "text"]
+  SUPPORTED_TAGS = ["p", "ul", "ol", "li", "a", "em", "strong", "text"]
 
-  def render_textarea_values
+  def render_wysywyg_content
     lines = []
 
     if q_visible? && humanized_answer.present?
@@ -12,7 +12,7 @@ module QaePdfForms::CustomQuestions::Textarea
       children.each do |child|
         lines_tag = tags_name(child)
 
-        if lines_tag == AVAILABLE_TAGS[0] || lines_tag == AVAILABLE_TAGS[1] || lines_tag == AVAILABLE_TAGS[2]
+        if lines_tag == SUPPORTED_TAGS[0] || lines_tag == SUPPORTED_TAGS[1] || lines_tag == SUPPORTED_TAGS[2]
           textarea_content_picker(lines, child, lines_tag)
         end
       end
@@ -195,7 +195,7 @@ module QaePdfForms::CustomQuestions::Textarea
   end
 
   def tags_name(tag)
-    if tag.name.is_a?(String) && AVAILABLE_TAGS.detect do |el|
+    if tag.name.is_a?(String) && SUPPORTED_TAGS.detect do |el|
         el == tag.name
       end
       tag.name
@@ -225,14 +225,14 @@ module QaePdfForms::CustomQuestions::Textarea
       child.children.each do |baby|
         tag = tags_name(baby)
 
-        if tag == AVAILABLE_TAGS[1] || tag == AVAILABLE_TAGS[2]
+        if tag == SUPPORTED_TAGS[1] || tag == SUPPORTED_TAGS[2]
           content << {"<" + tag + ">" => {style: tags_style(baby)}}
-        elsif tag == AVAILABLE_TAGS[3]
+        elsif tag == SUPPORTED_TAGS[3]
           content << {"<" + tag + ">" => {style: tags_style(baby)}}
-        elsif tag == AVAILABLE_TAGS[4]
+        elsif tag == SUPPORTED_TAGS[4]
           tag = "link"
           content << "<u><" + tag + " href=#{links_href(baby)}>"
-        elsif tag == AVAILABLE_TAGS[7]
+        elsif tag == SUPPORTED_TAGS[7]
           simple_text = baby.text
           content << simple_text
         else
@@ -241,7 +241,7 @@ module QaePdfForms::CustomQuestions::Textarea
 
         adding_children(content, baby)
 
-        if tag != AVAILABLE_TAGS[7]
+        if tag != SUPPORTED_TAGS[7]
           if tag == "link"
             content << "</" + tag + "></u>"
           else
