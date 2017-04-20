@@ -260,7 +260,7 @@ module QaePdfForms::CustomQuestions::Textarea
           content << "<" + tag + ">"
         end
 
-        wysywyg_get_item_content(content, baby)
+        wysywyg_get_item_content(baby)
 
         if tag != SUPPORTED_TAGS[7]
           if tag == "link"
