@@ -6,17 +6,15 @@ module QaePdfForms::CustomQuestions::Textarea
 
   def render_wysywyg_content
     if display_wysywyg_q?
-      wysywyg_raw_content.each do |child|
-        tag_name = get_tag_name(child)
+      wysywyg_entries.each do |child|
+        tag_name = wysywyg_get_tag_name(child)
 
         if MAIN_CONTENT_BLOCKS.include?(tag_name)
-          adding_children(content, child)
-
-          render_line(
+          render_wysywyg_line(
             {
               "<" + tag_name + ">" => {
-                style: tags_style(child),
-                content: content
+                style: wysywyg_get_style(child),
+                content: wysywyg_get_item_content(child)
               }
             }
           )
@@ -31,7 +29,7 @@ module QaePdfForms::CustomQuestions::Textarea
     q_visible? && humanized_answer.present?
   end
 
-  def wysywyg_raw_content
+  def wysywyg_entries
     Nokogiri::HTML.parse(
       humanized_answer
     ).children[1]
@@ -39,7 +37,7 @@ module QaePdfForms::CustomQuestions::Textarea
      .children
   end
 
-  def render_line(line)
+  def render_wysywyg_line(line)
     if line.keys[0] == "<p>"
       lines_style = styles_picker(get_styles(line).split(", "))
       print_pdf(get_content(line).join(""), lines_style)
@@ -214,7 +212,7 @@ module QaePdfForms::CustomQuestions::Textarea
     styles
   end
 
-  def get_tag_name(tag)
+  def wysywyg_get_tag_name(tag)
     if tag.name.is_a?(String) && SUPPORTED_TAGS.detect do |el|
         el == tag.name
       end
@@ -223,7 +221,7 @@ module QaePdfForms::CustomQuestions::Textarea
     end
   end
 
-  def tags_style(tag)
+  def wysywyg_get_style(tag)
     get_attribute_value(tag, "style")
   end
 
@@ -241,15 +239,17 @@ module QaePdfForms::CustomQuestions::Textarea
     end
   end
 
-  def adding_children(content, child)
+  def wysywyg_get_item_content(child)
+    content = []
+
     if child.children.present?
       child.children.each do |baby|
-        tag = get_tag_name(baby)
+        tag = wysywyg_get_tag_name(baby)
 
         if tag == SUPPORTED_TAGS[1] || tag == SUPPORTED_TAGS[2]
-          content << {"<" + tag + ">" => {style: tags_style(baby)}}
+          content << {"<" + tag + ">" => {style: wysywyg_get_style(baby)}}
         elsif tag == SUPPORTED_TAGS[3]
-          content << {"<" + tag + ">" => {style: tags_style(baby)}}
+          content << {"<" + tag + ">" => {style: wysywyg_get_style(baby)}}
         elsif tag == SUPPORTED_TAGS[4]
           tag = "link"
           content << "<u><" + tag + " href=#{links_href(baby)}>"
@@ -260,7 +260,7 @@ module QaePdfForms::CustomQuestions::Textarea
           content << "<" + tag + ">"
         end
 
-        adding_children(content, baby)
+        wysywyg_get_item_content(content, baby)
 
         if tag != SUPPORTED_TAGS[7]
           if tag == "link"
@@ -271,5 +271,7 @@ module QaePdfForms::CustomQuestions::Textarea
         end
       end
     end
+
+    content
   end
 end
