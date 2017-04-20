@@ -60,10 +60,16 @@ module QaePdfForms::CustomQuestions::Textarea
   end
 
   def wysywyg_print_lists(key, line)
-    lists_style = wysywyg_get_style_values(line)
+    strings_picker(
+      wysywyg_prepare_list_content(line),
+      [],
+      wysywyg_get_list_left_margin(line),
+      key
+    )
+  end
 
-    string = []
-    styles = []
+  def wysywyg_get_list_left_margin(line)
+    lists_style = wysywyg_get_style_values(line)
 
     if lists_style.present?
       margin_left = lists_style.split(", ").select do |el|
@@ -72,15 +78,10 @@ module QaePdfForms::CustomQuestions::Textarea
         el.split(":").second.strip.gsub!("px", "").to_i/2
       end.sum
 
-      styles << "margin-left:#{margin_left}px"
+      "margin-left:#{margin_left}px"
+    else
+      ""
     end
-
-    strings_picker(
-      wysywyg_prepare_list_content(line),
-      string,
-      styles,
-      key
-    )
   end
 
   def wysywyg_prepare_list_content(line)
@@ -270,10 +271,10 @@ module QaePdfForms::CustomQuestions::Textarea
 
         wysywyg_get_item_content(baby, content)
 
-        if tag != "text"
-          ending_tag = "</" + tag + ">"
+        if t_name != "text"
+          ending_tag = "</" + t_name + ">"
 
-          if tag == "link"
+          if t_name == "link"
             ending_tag = "#{ending_tag}</u>"
           end
 
