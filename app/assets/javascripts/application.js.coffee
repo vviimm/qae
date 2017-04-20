@@ -4,6 +4,7 @@
 #= require jquery.fileupload
 #= require select2.full.min
 #= require ckeditor/init
+#= require ./ckeditor/config.js
 #= require Countable
 #= require moment.min
 #= require core
@@ -377,7 +378,7 @@ jQuery ->
         resetResizeTextarea()
 
   $(document).on "click", ".save-quit-link a", (e) ->
-    CkeditorQaeForm.triggerChanged()
+    CKchanged()
 
     if changesUnsaved
       e.preventDefault()
@@ -389,6 +390,18 @@ jQuery ->
 
       autosave ->
         window.location.href = link
+
+  CKupdate = ->
+    for instance of CKEDITOR.instances
+      CKEDITOR.instances[instance].updateElement()
+
+  CKchanged = ->
+    for instance of CKEDITOR.instances
+      old_value = $("\##{instance}").val()
+      new_value = CKEDITOR.instances[instance].getData()
+
+      if old_value != new_value
+        raiseChangesFlag()
 
   save_form_data = (callback) ->
     url = $('form.qae-form').data('autosave-url')
@@ -425,7 +438,7 @@ jQuery ->
       autosave_enabled = false
 
     if autosave_enabled
-      CkeditorQaeForm.triggerUpdate()
+      CKupdate()
       save_form_data(callback)
     #TODO: indicators, error handlers?
 
