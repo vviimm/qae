@@ -3,6 +3,7 @@
 #= require jquery.iframe-transport
 #= require jquery.fileupload
 #= require select2.full.min
+#= require ckeditor/init
 #= require Countable
 #= require moment.min
 #= require core
@@ -376,6 +377,8 @@ jQuery ->
         resetResizeTextarea()
 
   $(document).on "click", ".save-quit-link a", (e) ->
+    CkeditorQaeForm.triggerChanged()
+
     if changesUnsaved
       e.preventDefault()
       e.stopPropagation()
@@ -422,6 +425,7 @@ jQuery ->
       autosave_enabled = false
 
     if autosave_enabled
+      CkeditorQaeForm.triggerUpdate()
       save_form_data(callback)
     #TODO: indicators, error handlers?
 
@@ -920,3 +924,6 @@ jQuery ->
     $(".js-press-comment-feeback").removeClass("section-confirmed")
     if $(".js-press-comment-correct input:checked").val() == "true"
       $(".js-press-comment-feeback").addClass("section-confirmed")
+
+# Init WYSYWYG editor for QAE Form textareas
+CkeditorQaeForm.init()

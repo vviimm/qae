@@ -4,6 +4,7 @@ class QaePdfForms::General::QuestionPointer
   include QaePdfForms::CustomQuestions::Lists
   include QaePdfForms::CustomQuestions::SupporterLists
   include QaePdfForms::CustomQuestions::CheckboxSeria
+  include QaePdfForms::CustomQuestions::Textarea
   include FinancialTable
   include QuestionTextHelper
 
@@ -379,7 +380,7 @@ class QaePdfForms::General::QuestionPointer
         form_pdf.default_bottom_margin
         render_word_limit
 
-        form_pdf.render_standart_answer_block(title)
+        render_textarea_values # form_pdf.render_standart_answer_block(title)
       when *LIST_TYPES
         form_pdf.indent 7.mm do
           render_list
