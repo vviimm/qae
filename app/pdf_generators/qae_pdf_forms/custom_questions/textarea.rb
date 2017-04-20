@@ -1,6 +1,8 @@
 module QaePdfForms::CustomQuestions::Textarea
 
-  MAIN_CONTENT_BLOCKS = ["p", "ul", "ol"]
+  LIST_TAGS = ["ul", "ol"]
+
+  MAIN_CONTENT_BLOCKS = ["p"] + LIST_TAGS
 
   SUPPORTED_TAGS = MAIN_CONTENT_BLOCKS + ["li", "a", "em", "strong", "text"]
 
@@ -42,27 +44,24 @@ module QaePdfForms::CustomQuestions::Textarea
   end
 
   def render_wysywyg_line(line)
-    if line.keys[0] == "<p>"
-      lines_style = styles_picker(get_styles(line).split(", "))
-      print_pdf(get_content(line).join(""), lines_style)
+    tag_abbr = line.keys[0]
 
-    elsif line.keys[0] == "<ul>" || line.keys[0] == "<ol>"
-      print_lists(line.keys[0], line)
+    if tag_abbr == "<p>"
+      lines_style = styles_picker(wysywyg_get_style_values(line).split(", "))
+      print_pdf(wysywyg_get_values_content(line).join(""), lines_style)
+
+    elsif wysywyg_list_tag?(tag_abbr)
+      wysywyg_print_lists(tag_abbr, line)
     end
   end
 
-  def print_lists(key, line)
-    lists_style = get_styles(line)
-    content = get_content(line)
+  def wysywyg_list_tag?(tag_abbr)
+    LIST_TAGS.include?(tag_obj.gsub(/(\<|\>)/, ""))
+  end
 
-    content.map! do |el|
-      if el.include?("\r\n")
-        element = el.gsub!("\r", "").gsub!("\n", "").gsub!("\t", "")
-      end
-      el
-    end.reject!(&:blank?)
+  def wysywyg_print_lists(key, line)
+    lists_style = wysywyg_get_style_values(line)
 
-    content << "\r\n\t"
     string = []
     styles = []
 
@@ -76,7 +75,26 @@ module QaePdfForms::CustomQuestions::Textarea
       styles << "margin-left:#{margin_left}px"
     end
 
-    strings_picker(content, string, styles, key)
+    strings_picker(
+      wysywyg_prepare_list_content(line),
+      string,
+      styles,
+      key
+    )
+  end
+
+  def wysywyg_prepare_list_content(line)
+    content = wysywyg_get_values_content(line)
+
+    content.map! do |el|
+      if el.include?("\r\n")
+        element = el.gsub!("\r", "").gsub!("\n", "").gsub!("\t", "")
+      end
+      el
+    end.reject!(&:blank?)
+
+    content << "\r\n\t"
+    content
   end
 
   def strings_picker(content, string, styles, key)
@@ -108,14 +126,14 @@ module QaePdfForms::CustomQuestions::Textarea
           string = []
           marker_of_list(string, key, n)
 
-          if get_styles(i).present?
-            styles << get_styles(i)
+          if wysywyg_get_style_values(i).present?
+            styles << wysywyg_get_style_values(i)
           end
         else
           marker_of_list(string, key, n)
 
-          if get_styles(i).present?
-            styles << get_styles(i)
+          if wysywyg_get_style_values(i).present?
+            styles << wysywyg_get_style_values(i)
           end
         end
 
@@ -128,8 +146,8 @@ module QaePdfForms::CustomQuestions::Textarea
         ns_history << n
         string = []
 
-        if get_styles(i).present?
-          styles << get_styles(i)
+        if wysywyg_get_style_values(i).present?
+          styles << wysywyg_get_style_values(i)
         else
           styles << "margin-left: 20px"
         end
@@ -144,8 +162,8 @@ module QaePdfForms::CustomQuestions::Textarea
         keys_history << key
         string = []
 
-        if get_styles(i).present?
-          styles << get_styles(i)
+        if wysywyg_get_style_values(i).present?
+          styles << wysywyg_get_style_values(i)
         else
           styles << "margin-left: 20px"
         end
@@ -177,11 +195,11 @@ module QaePdfForms::CustomQuestions::Textarea
     end
   end
 
-  def get_styles(line)
+  def wysywyg_get_style_values(line)
     line.values[0][:style].to_s
   end
 
-  def get_content(line)
+  def wysywyg_get_values_content(line)
     line.values[0][:content]
   end
 
