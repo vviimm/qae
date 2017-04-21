@@ -3,6 +3,10 @@
 #= require jquery.iframe-transport
 #= require jquery.fileupload
 #= require ckeditor/init
+#= require ckeditor/initialize_ckeditor
+#= require ckeditor/config
+#= require ckeditor/plugins/wordcount/plugin
+#= require ckeditor/plugins/wordcount/lang/en
 #= require select2.full.min
 #= require Countable
 #= require moment.min
@@ -17,7 +21,6 @@
 #= require vendor/zxcvbn
 #= require vendor/jquery-debounce
 #= require_tree ./frontend
-#= require_tree ./ckeditor
 #= require offline
 
 jQuery ->
