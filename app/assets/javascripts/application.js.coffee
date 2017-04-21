@@ -5,6 +5,8 @@
 #= require select2.full.min
 #= require ckeditor/init
 #= require ./ckeditor/config.js
+#= require ckeditor/plugins/wordcount/plugin
+#= require ckeditor/plugins/wordcount/lang/en
 #= require Countable
 #= require moment.min
 #= require core

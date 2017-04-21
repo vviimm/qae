@@ -6,4 +6,5 @@ CKEDITOR.editorConfig = function (config) {
     {name: "paragraph", items: ["NumberedList", "BulletedList", "-", "Outdent", "Indent", "-", "JustifyLeft", "JustifyCenter", "JustifyRight", "JustifyBlock"]}
   ];
   config.toolbar = "mini";
+  config.extraPlugins = 'wordcount';
 }
