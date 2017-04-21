@@ -399,6 +399,7 @@ jQuery ->
 
       if old_value != new_value
         raiseChangesFlag()
+        $("\##{instance}").val(new_value)
 
   save_form_data = (callback) ->
     url = $('form.qae-form').data('autosave-url')
