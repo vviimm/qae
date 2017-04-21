@@ -98,6 +98,9 @@ gem "pusher"
 # Text Search
 gem 'pg_search', "0.7.9"
 
+# Text editor
+gem 'ckeditor'
+
 # YAML/Hash loading
 gem 'active_hash'
 gem 'virtus'
