@@ -228,6 +228,7 @@ module QaePdfForms::CustomQuestions::Textarea
       if line.present?
         form_pdf.font("Times-Roman") do
           form_pdf.text "#{line}", lines_style if lines_style.present?
+          form_pdf.move_down 2.mm
         end
       end
     end
