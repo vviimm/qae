@@ -299,6 +299,7 @@ jQuery ->
   $(document).on "click", "a.js-step-link, .js-step-link button[type='submit']", (e) ->
     e.preventDefault()
     e.stopPropagation()
+    CKchanged()
 
     current_step = if $(this).attr('data-step') isnt undefined
       $(this).attr("data-step")
