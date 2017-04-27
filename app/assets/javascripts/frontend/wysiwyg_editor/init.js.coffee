@@ -14,5 +14,4 @@ window.CkeditorQaeForm =
 
         editor.on 'configLoaded', ->
           editor.config.wordcount =
-            showWordCount: true
             maxWordCount: element.data('word-max')

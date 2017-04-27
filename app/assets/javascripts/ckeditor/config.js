@@ -7,4 +7,8 @@ CKEDITOR.editorConfig = function (config) {
   ];
   config.toolbar = "mini";
   config.extraPlugins = 'wordcount';
+    config.wordcount = {
+      showWordCount: true,
+      maxWordCount: 100
+    };
 }
